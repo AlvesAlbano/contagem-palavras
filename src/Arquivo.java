@@ -11,8 +11,7 @@ public class Arquivo {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(caminho))) {
             String linha;
             while ((linha = bufferedReader.readLine()) != null) {
-                // conteudo.append(linha).append("\n");
-                conteudo.append(linha);
+                conteudo.append(linha).append("\n");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,0 +1,13 @@
+Iteracao,Tempo(ns),Nome,Paradigma,Quantidade_Threads
+1,3816999691,Dracula-165307,Paralelo,4
+2,3561170772,Dracula-165307,Paralelo,4
+3,3268925997,Dracula-165307,Paralelo,4
+4,3244060947,Dracula-165307,Paralelo,4
+5,3588466596,Dracula-165307,Paralelo,4
+6,3158515810,Dracula-165307,Paralelo,4
+7,3431022444,Dracula-165307,Paralelo,4
+8,3359371600,Dracula-165307,Paralelo,4
+9,3424715439,Dracula-165307,Paralelo,4
+10,3649930906,Dracula-165307,Paralelo,4
+
+3450318020,200

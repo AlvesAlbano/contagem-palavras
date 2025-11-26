@@ -1,0 +1,13 @@
+Iteracao,Tempo(ns),Nome,Paradigma,Quantidade_Threads
+1,25287761039,DonQuixote-388208,Paralelo,4
+2,22156269651,DonQuixote-388208,Paralelo,4
+3,21029685178,DonQuixote-388208,Paralelo,4
+4,20814720919,DonQuixote-388208,Paralelo,4
+5,21947596539,DonQuixote-388208,Paralelo,4
+6,23825689695,DonQuixote-388208,Paralelo,4
+7,22457229261,DonQuixote-388208,Paralelo,4
+8,20105394575,DonQuixote-388208,Paralelo,4
+9,26483824854,DonQuixote-388208,Paralelo,4
+10,20350613479,DonQuixote-388208,Paralelo,4
+
+22445878519,000

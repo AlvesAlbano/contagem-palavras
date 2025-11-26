@@ -22,65 +22,66 @@ public class Desempenho {
         return total / iteracoes;
     }
 
-    public static void gerarRelatorioSerial(Runnable runnable, int iteracoes, String nomeAlgoritmo, long volumeDados) {
+    public static void gerarRelatorioSerial(Runnable runnable, int iteracoes, String nomeLivro) {
         
-        final String pasta = String.format("src/relatorios/serial/volume_de_%d", volumeDados);
+        final String pasta = String.format("src/relatorios/serial/%s", nomeLivro);
         long somaTempos = 0;
 
         new File(pasta).mkdirs();
 
-        String nomeArquivo = String.format("%s/%s_%d_relatorio.csv", pasta ,nomeAlgoritmo,volumeDados);
+        String nomeArquivo = String.format("%s/%s_serial_relatorio.csv", pasta ,nomeLivro);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
-            writer.write("Iteracao,Tempo(ns),Nome,Paradigma,Volume");
+            writer.write("Iteracao,Tempo(ns),Nome,Paradigma");
             writer.newLine();
 
             for (int i = 1; i <= iteracoes; i++) {
                 long tempo = tempoExecucao(runnable);
                 somaTempos += tempo;
-                writer.write(String.format("%d,%d,%s,Serial,%d", i, tempo,nomeAlgoritmo,volumeDados));
+                writer.write(String.format("%d,%d,%s,Serial", i, tempo,nomeLivro));
                 writer.newLine();
             }
 
-            // double media = (double) somaTempos / iteracoes;
+            double media = (double) somaTempos / iteracoes;
 
-            // writer.newLine();
-            // writer.write(String.format("%.3f", media)); // escreve a média no final
-            // writer.newLine();
+            writer.newLine();
+            writer.write(String.format("%.3f", media)); // escreve a média no final
+            writer.newLine();
 
-            System.out.printf("relatório do %s Serial gerado \n",nomeAlgoritmo);
+            System.out.printf("relatório do %s Serial gerado \n",nomeLivro);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void gerarRelatorioParalelo(Runnable runnable, int iteracoes, String nomeAlgoritmo, long volumeDados, int quantidadeThreads) {
+    public static void gerarRelatorioParalelo(Runnable runnable, int iteracoes, String nomeLivro,int quantidadeThreads) {
         
-        final String pasta = String.format("src/relatorios/paralelo/volume_de_%d", volumeDados);
+        final String pasta = String.format("src/relatorios/paralelo/%s", nomeLivro);
         long somaTempos = 0;
+
         new File(pasta).mkdirs();
 
-        String nomeArquivo = String.format("%s/%s_%d_%d_relatorio.csv", pasta ,nomeAlgoritmo,volumeDados,quantidadeThreads);
+        String nomeArquivo = String.format("%s/%s_paralelo_relatorio.csv", pasta ,nomeLivro);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
-            writer.write("Iteracao,Tempo(ns),Nome,Paradigma,Volume");
+            writer.write("Iteracao,Tempo(ns),Nome,Paradigma,Quantidade_Threads");
             writer.newLine();
 
             for (int i = 1; i <= iteracoes; i++) {
                 long tempo = tempoExecucao(runnable);
                 somaTempos += tempo;
-                writer.write(String.format("%d,%d,%s,Paralelo,%d", i, tempo,nomeAlgoritmo,volumeDados));
+                writer.write(String.format("%d,%d,%s,Paralelo,%d", i, tempo,nomeLivro,quantidadeThreads));
                 writer.newLine();
             }
 
-            // double media = (double) somaTempos / iteracoes;
+            double media = (double) somaTempos / iteracoes;
 
-            // writer.newLine();
-            // writer.write(String.format("%.3f", media)); // escreve a média no final
-            // writer.newLine();
+            writer.newLine();
+            writer.write(String.format("%.3f", media)); // escreve a média no final
+            writer.newLine();
 
-            System.out.printf("relatório do %s Paralelo gerado \n",nomeAlgoritmo);
+            System.out.printf("relatório do %s Paralelo gerado \n",nomeLivro);
 
         } catch (Exception e) {
             e.printStackTrace();
