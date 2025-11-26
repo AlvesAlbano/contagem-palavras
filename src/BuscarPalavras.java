@@ -1,78 +1,39 @@
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveTask;
 
 public class BuscarPalavras {
-    
-    private static List<String> listaPalavrasChaves;
-    
-    public static void SerialCPU(String conteudo,String caminho){
         
-        final StringBuilder resultado = new StringBuilder();
-
+    public static void SerialCPU(String conteudo,String palavraChave){
+        
         final String[] palavras = formatarTexto(conteudo);
-        criarPalavrasChaves(palavras);
-        
-        for (int i = 0; i < listaPalavrasChaves.size(); i++) {
-            int contador = 0;
-            String palavraChaveAtual = listaPalavrasChaves.get(i);
+        int ocorrencias = 0;
 
-            for (int j = 0; j < palavras.length; j++) {
-                
-                if (palavraChaveAtual.equalsIgnoreCase((palavras[j]))) {
-                    contador++;
-                }
+        final long tempoInicio = System.nanoTime();
+
+        for(int i = 0;i < palavras.length;i++){
+            if (palavras[i].equalsIgnoreCase(palavraChave)){
+                ocorrencias++;
             }
-            
-            resultado.append(
-                String.format("%s - %d \n", palavraChaveAtual,contador)
-            );
         }
 
-        Arquivo.criarArquivoResultado(resultado, caminho);
+        final long tempoFim = System.nanoTime();
+
+        final long tempoExecucao = tempoFim - tempoInicio;
+
+        // System.out.printf("SerialCPU: %d ocorrências em %d ms. Palavra Chave: %s\n",ocorrencias,tempoExecucao,palavraChave);
     }
 
-    public static void SerialCPU(String conteudo){
-        
-        final StringBuilder resultado = new StringBuilder();
-
-        final String[] palavras = formatarTexto(conteudo);
-        criarPalavrasChaves(palavras);
-        
-        for (int i = 0; i < listaPalavrasChaves.size(); i++) {
-            int contador = 0;
-            String palavraChaveAtual = listaPalavrasChaves.get(i);
-
-            for (int j = 0; j < palavras.length; j++) {
-                
-                if (palavraChaveAtual.equalsIgnoreCase((palavras[j]))) {
-                    contador++;
-
-                    // if (palavraChaveAtual.hashCode() == palavras[j].hashCode() && !palavraChaveAtual.equalsIgnoreCase((palavras[j]))) {
-                    //     System.out.printf("%s - %s\n",palavraChaveAtual,palavras[j]);
-                    //     System.out.println("fudeu");
-                    //     break;
-                    // }
-                }
-            }
-            
-            resultado.append(
-                String.format("%s - %d \n", palavraChaveAtual,contador)
-            );
-        }
-
-    }
-
-    public static void ParallelCPU(String conteudo, int quantidadeThreads){
+    public static void ParallelCPU(String conteudo, String palavraChave,int quantidadeThreads){
         try (ExecutorService executorService = Executors.newFixedThreadPool(quantidadeThreads)) {
             
-            Future<String[]>[] resultadosFuturos = new Future[quantidadeThreads];
-            String[] palavras = formatarTexto(conteudo);
+            final long tempoInicio = System.nanoTime();
+
+            Future<Integer>[] resultadosFuturos = new Future[quantidadeThreads];
+            final String[] palavras = formatarTexto(conteudo);
             
             int n = palavras.length;
             int tamanhoSublistas = (int) Math.ceil((double) n / quantidadeThreads);
@@ -86,22 +47,45 @@ public class BuscarPalavras {
                 String[] subStringPalavras = Arrays.copyOfRange(palavras, inicio, fim);
                 
                 resultadosFuturos[i] = executorService.submit(() -> {
-                    SerialCPU(String.join(",",subStringPalavras).replace(",", " "));
-                    return subStringPalavras;
+                    return contarOcorrencias(subStringPalavras, palavraChave);
                 });
             }
 
+            int resultadoOcorrencias = 0;
             for (int i = 0; i < quantidadeThreads; i++) {
                 if (resultadosFuturos[i] != null) {
-                    resultadosFuturos[i].get();        
+                    resultadoOcorrencias += resultadosFuturos[i].get();        
                 }
             }
+
+            final long tempoFim = System.nanoTime();
+            final long tempoExecucao = tempoFim - tempoInicio;
+
+            // System.out.printf("ParallelCPU: %d ocorrências em %d ms. Palavra Chave: %s\n",resultadoOcorrencias,tempoExecucao,palavraChave);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public static void paralelo(String conteudo, String palavraChave,int quantidadeThreads){
+        try (ForkJoinPool forkJoinPool = new ForkJoinPool(quantidadeThreads)) {
+            
+            String[] texto = formatarTexto(conteudo);
+            int n = texto.length;
+
+            int inicio = 0;
+            int fim = n - 1;
+
+            final int FATOR_DIVISAO_PARALELA = 4;
+            final int LIMITE_MINIMO_SUBLISTAS = Math.max(n / (quantidadeThreads * FATOR_DIVISAO_PARALELA), 10000);
+
+            forkJoinPool.invoke(new ContarOcorrenciasTask(texto, palavraChave, inicio, fim, LIMITE_MINIMO_SUBLISTAS));
+        
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public static void ParallelGPU(String conteudo) {
         
         
@@ -116,15 +100,67 @@ public class BuscarPalavras {
         return conteudo.split(" ");
     }
 
-    private static void criarPalavrasChaves(String[] palavras){
+    private static int contarOcorrencias(String[] texto,String palavraChave){
         
-        final Set<String> palavrasChaves = new HashSet<>();
+        int ocorrencias = 0;
 
-        for (int i = 0; i < palavras.length; i++) {
-            palavrasChaves.add(palavras[i]);
+        for(int i = 0;i < texto.length;i++){
+            if (texto[i].equalsIgnoreCase(palavraChave)){
+                ocorrencias++;
+            }
         }
 
-        listaPalavrasChaves = new ArrayList<>(palavrasChaves);
+        return ocorrencias;
     }
 
+    private static class ContarOcorrenciasTask extends RecursiveTask<Integer> {
+        private static String[] conteudo;
+        private static String palavraChave;
+        private static int inicio;
+        private static int fim;
+        private static int LIMITE_MINIMO_SUBLISTAS;
+
+        public ContarOcorrenciasTask(String[] conteudo, String palavraChave, int inicio, int fim, int lIMITE_MINIMO_SUBLISTAS) {
+            this.conteudo = conteudo;
+            this.palavraChave = palavraChave;
+            this.inicio = inicio;
+            this.fim = fim;
+            LIMITE_MINIMO_SUBLISTAS = lIMITE_MINIMO_SUBLISTAS;
+        }
+
+        private static Integer contarOcorrencias(String[] conteudo,int inicio,int fim){
+            Integer ocorrencias = 0;
+
+            for (int i = inicio; i <= fim; i++) {
+                if (conteudo[i].equalsIgnoreCase(palavraChave)) {
+                    ocorrencias++;
+                }
+            }
+
+            return ocorrencias;
+        }
+
+        @Override
+        protected Integer compute() {
+            if (fim - inicio + 1 <= LIMITE_MINIMO_SUBLISTAS){
+                return contarOcorrencias(conteudo, inicio, fim);
+            }
+
+
+            int meio = (inicio + fim) / 2;
+
+            ContarOcorrenciasTask esquerda = new ContarOcorrenciasTask(conteudo, palavraChave, inicio, meio, LIMITE_MINIMO_SUBLISTAS);
+            ContarOcorrenciasTask direita = new ContarOcorrenciasTask(conteudo, palavraChave, meio + 1, fim, LIMITE_MINIMO_SUBLISTAS);
+
+            esquerda.fork();
+            int resultadodireita = direita.compute();
+            int resultadoesquerda = esquerda.join();
+
+            return resultadoesquerda + resultadodireita;
+
+
+        }
+
+        
+    }
 }

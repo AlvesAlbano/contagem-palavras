@@ -9,21 +9,24 @@ public class App {
             "Amostras/DonQuixote-388208.txt", // tamanho: 2.091.965
         };
 
-        final int iteracoes = 10;
+        final int iteracoes = 1_000;
         final int quantidadeThreads = 4;
+        final String palavraChave = "cunning";
 
         for (int i = 0; i < arquivos.length; i++) {
             String arquivoCaminho = arquivos[i];
             String conteudo = Arquivo.lerArquivo(arquivoCaminho);
             String nomeLivro = new File(arquivoCaminho).getName().replace(".txt", "");
-            Desempenho.gerarRelatorioSerial(() -> BuscarPalavras.SerialCPU(conteudo), iteracoes, nomeLivro);
+            System.out.println(nomeLivro);
+            Desempenho.gerarRelatorioSerial(() -> BuscarPalavras.SerialCPU(conteudo,palavraChave), iteracoes, nomeLivro);
         }
 
         for (int i = 0; i < arquivos.length; i++) {
             String arquivoCaminho = arquivos[i];
             String conteudo = Arquivo.lerArquivo(arquivoCaminho);
             String nomeLivro = new File(arquivoCaminho).getName().replace(".txt", "");
-            Desempenho.gerarRelatorioParalelo(() -> BuscarPalavras.ParallelCPU(conteudo, quantidadeThreads), iteracoes, nomeLivro,quantidadeThreads);
+            System.out.println(nomeLivro);
+            Desempenho.gerarRelatorioParalelo(() -> BuscarPalavras.paralelo(conteudo, palavraChave, quantidadeThreads), iteracoes, nomeLivro,quantidadeThreads);
         }
     }
 }
