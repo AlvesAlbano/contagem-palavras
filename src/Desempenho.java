@@ -88,4 +88,38 @@ public class Desempenho {
         }
     }
 
+    public static void gerarRelatorioParaleloGPU(Runnable runnable, int iteracoes, String nomeLivro,int quantidadeThreads) {
+        
+        final String pasta = String.format("src/relatorios/paralelo-GPU/%s", nomeLivro);
+        long somaTempos = 0;
+
+        new File(pasta).mkdirs();
+
+        String nomeArquivo = String.format("%s/%s_paralelo_relatorio.csv", pasta ,nomeLivro);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
+            writer.write("Iteracao,Tempo(ns),Nome,Paradigma,Quantidade_Threads");
+            writer.newLine();
+
+            for (int i = 1; i <= iteracoes; i++) {
+                long tempo = tempoExecucao(runnable);
+                somaTempos += tempo;
+                writer.write(String.format("%d,%d,%s,Paralelo-GPU,%d", i, tempo,nomeLivro,quantidadeThreads));
+                writer.newLine();
+            }
+
+            double media = (double) somaTempos / iteracoes;
+
+            writer.newLine();
+            writer.write(String.format("%.3f", media)); // escreve a média no final
+            writer.newLine();
+
+            System.out.printf("relatório do %s Paralelo GPU gerado \n",nomeLivro);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

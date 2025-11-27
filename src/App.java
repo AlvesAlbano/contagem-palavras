@@ -11,22 +11,35 @@ public class App {
 
         final int iteracoes = 1_000;
         final int quantidadeThreads = 4;
-        final String palavraChave = "cunning";
+        final String palavraChave = "cunning".toLowerCase();
 
         for (int i = 0; i < arquivos.length; i++) {
             String arquivoCaminho = arquivos[i];
             String conteudo = Arquivo.lerArquivo(arquivoCaminho);
+            String[] textoFormatado = FormatarTexto.formatar(conteudo);
             String nomeLivro = new File(arquivoCaminho).getName().replace(".txt", "");
             System.out.println(nomeLivro);
-            Desempenho.gerarRelatorioSerial(() -> BuscarPalavras.SerialCPU(conteudo,palavraChave), iteracoes, nomeLivro);
+            Desempenho.gerarRelatorioSerial(() -> BuscarPalavras.SerialCPU(textoFormatado,palavraChave), iteracoes, nomeLivro);
         }
 
         for (int i = 0; i < arquivos.length; i++) {
             String arquivoCaminho = arquivos[i];
             String conteudo = Arquivo.lerArquivo(arquivoCaminho);
             String nomeLivro = new File(arquivoCaminho).getName().replace(".txt", "");
+            String[] textoFormatado = FormatarTexto.formatar(conteudo);
             System.out.println(nomeLivro);
-            Desempenho.gerarRelatorioParalelo(() -> BuscarPalavras.paralelo(conteudo, palavraChave, quantidadeThreads), iteracoes, nomeLivro,quantidadeThreads);
+            Desempenho.gerarRelatorioParalelo(() -> BuscarPalavras.ParallelCPU(textoFormatado, palavraChave, quantidadeThreads), iteracoes, nomeLivro,quantidadeThreads);
         }
+
+        for (int i = 0; i < arquivos.length; i++) {
+            String arquivoCaminho = arquivos[i];
+            String conteudo = Arquivo.lerArquivo(arquivoCaminho);
+            String nomeLivro = new File(arquivoCaminho).getName().replace(".txt", "");
+            String[] textoFormatado = FormatarTexto.formatar(conteudo);
+            System.out.println(nomeLivro);
+            Desempenho.gerarRelatorioParaleloGPU(() -> BuscarPalavras.ParallelGPU(textoFormatado, palavraChave), iteracoes, nomeLivro,quantidadeThreads);
+        }
+
+
     }
 }
