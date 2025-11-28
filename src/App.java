@@ -9,7 +9,7 @@ public class App {
             "Amostras/DonQuixote-388208.txt", // tamanho: 2.091.965
         };
 
-        final int iteracoes = 1_000;
+        final int iteracoes = 500;
         final int quantidadeThreads = 4;
         final String palavraChave = "cunning".toLowerCase();
 
@@ -37,7 +37,7 @@ public class App {
             String nomeLivro = new File(arquivoCaminho).getName().replace(".txt", "");
             String[] textoFormatado = FormatarTexto.formatar(conteudo);
             System.out.println(nomeLivro);
-            Desempenho.gerarRelatorioParaleloGPU(() -> BuscarPalavras.ParallelGPU(textoFormatado, palavraChave), iteracoes, nomeLivro,quantidadeThreads);
+            Desempenho.gerarRelatorioParaleloGPU(() -> BuscarPalavras.ParallelGPU(textoFormatado, palavraChave), iteracoes, nomeLivro);
         }
 
 

@@ -32,7 +32,7 @@ public class Desempenho {
         String nomeArquivo = String.format("%s/%s_serial_relatorio.csv", pasta ,nomeLivro);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
-            writer.write("Iteracao,Tempo(ns),Nome,Paradigma");
+            writer.write("Iteracao,Tempo(ns),Nome_Livro,Paradigma");
             writer.newLine();
 
             for (int i = 1; i <= iteracoes; i++) {
@@ -42,11 +42,11 @@ public class Desempenho {
                 writer.newLine();
             }
 
-            double media = (double) somaTempos / iteracoes;
-
-            writer.newLine();
-            writer.write(String.format("%.3f", media)); // escreve a média no final
-            writer.newLine();
+//            double media = calcularMedia(somaTempos,iteracoes);
+//
+//            writer.newLine();
+//            writer.write(String.format("%.3f", media)); // escreve a média no final
+//            writer.newLine();
 
             System.out.printf("relatório do %s Serial gerado \n",nomeLivro);
 
@@ -65,7 +65,7 @@ public class Desempenho {
         String nomeArquivo = String.format("%s/%s_paralelo_relatorio.csv", pasta ,nomeLivro);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
-            writer.write("Iteracao,Tempo(ns),Nome,Paradigma,Quantidade_Threads");
+            writer.write("Iteracao,Tempo(ns),Nome_Livro,Paradigma,Quantidade_Threads");
             writer.newLine();
 
             for (int i = 1; i <= iteracoes; i++) {
@@ -75,11 +75,11 @@ public class Desempenho {
                 writer.newLine();
             }
 
-            double media = (double) somaTempos / iteracoes;
-
-            writer.newLine();
-            writer.write(String.format("%.3f", media)); // escreve a média no final
-            writer.newLine();
+//            double media = calcularMedia(somaTempos,iteracoes);
+//
+//            writer.newLine();
+//            writer.write(String.format("%.3f", media)); // escreve a média no final
+//            writer.newLine();
 
             System.out.printf("relatório do %s Paralelo gerado \n",nomeLivro);
 
@@ -88,37 +88,41 @@ public class Desempenho {
         }
     }
 
-    public static void gerarRelatorioParaleloGPU(Runnable runnable, int iteracoes, String nomeLivro,int quantidadeThreads) {
+    public static void gerarRelatorioParaleloGPU(Runnable runnable, int iteracoes, String nomeLivro) {
         
         final String pasta = String.format("src/relatorios/paralelo-GPU/%s", nomeLivro);
         long somaTempos = 0;
 
         new File(pasta).mkdirs();
 
-        String nomeArquivo = String.format("%s/%s_paralelo_relatorio.csv", pasta ,nomeLivro);
+        String nomeArquivo = String.format("%s/%s_paraleloGPU_relatorio.csv", pasta ,nomeLivro);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(nomeArquivo))) {
-            writer.write("Iteracao,Tempo(ns),Nome,Paradigma,Quantidade_Threads");
+            writer.write("Iteracao,Tempo(ns),Nome_Livro,Paradigma");
             writer.newLine();
 
             for (int i = 1; i <= iteracoes; i++) {
                 long tempo = tempoExecucao(runnable);
                 somaTempos += tempo;
-                writer.write(String.format("%d,%d,%s,Paralelo-GPU,%d", i, tempo,nomeLivro,quantidadeThreads));
+                writer.write(String.format("%d,%d,%s,Paralelo-GPU", i, tempo,nomeLivro));
                 writer.newLine();
             }
 
-            double media = (double) somaTempos / iteracoes;
-
-            writer.newLine();
-            writer.write(String.format("%.3f", media)); // escreve a média no final
-            writer.newLine();
+//            double media = calcularMedia(somaTempos,iteracoes);
+//
+//            writer.newLine();
+//            writer.write(String.format("%.3f", media)); // escreve a média no final
+//            writer.newLine();
 
             System.out.printf("relatório do %s Paralelo GPU gerado \n",nomeLivro);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static double calcularMedia(long somaTempos, int iteacoes){
+        return (double) somaTempos / iteacoes;
     }
 
 
