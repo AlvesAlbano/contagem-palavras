@@ -30,7 +30,7 @@ public class BuscarPalavras {
         final long tempoExecucao = tempoFim - tempoInicio;
 
 
-        // System.out.printf("SerialCPU: %d ocorrências em %d ms. Palavra Chave: %s\n",ocorrencias,tempoExecucao,palavraChave);
+        System.out.printf("SerialCPU: %d ocorrências em %d ms. Palavra Chave: %s\n",ocorrencias,tempoExecucao,palavraChave);
     }
 
     public static void ParallelCPU(String[] texto, String palavraChave,int quantidadeThreads){
@@ -52,7 +52,7 @@ public class BuscarPalavras {
 
             final long tempoExecucao = tempoFim - tempoInicio;
 
-            // System.out.printf("ParallelCPU: %d ocorrências em %d ms. Palavra Chave: %s\n",ocorrencias,tempoExecucao,palavraChave);
+            System.out.printf("ParallelCPU: %d ocorrências em %d ms. Palavra Chave: %s\n",ocorrencias,tempoExecucao,palavraChave);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,11 +146,8 @@ public class BuscarPalavras {
 
         final long tempoExecucao = tempoFim - tempoInicio;
 
-//         System.out.printf("ParallelGPU: %d ocorrências em %d ms. Palavra Chave: %s\n",ocorrencias,tempoExecucao,palavraChave);
+        System.out.printf("ParallelGPU: %d ocorrências em %d ms. Palavra Chave: %s\n",ocorrencias,tempoExecucao,palavraChave);
     }
-
-
-
 
     private static int[] hashTexto(String[] texto){
 
@@ -222,4 +219,3 @@ public class BuscarPalavras {
         }
     }
 }
-

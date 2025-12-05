@@ -9,9 +9,9 @@ public class App {
             "Amostras/DonQuixote-388208.txt", // tamanho: 2.091.965
         };
 
-        final int iteracoes = 500;
+        final int iteracoes = 1_500;
         final int quantidadeThreads = 4;
-        final String palavraChave = "cunning".toLowerCase();
+        final String palavraChave = "he".toLowerCase();
 
         for (int i = 0; i < arquivos.length; i++) {
             String arquivoCaminho = arquivos[i];

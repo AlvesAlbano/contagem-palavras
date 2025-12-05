@@ -48,7 +48,7 @@ public class Desempenho {
 //            writer.write(String.format("%.3f", media)); // escreve a média no final
 //            writer.newLine();
 
-            System.out.printf("relatório do %s Serial gerado \n",nomeLivro);
+            System.out.printf("arquivo CSV do %s Serial gerado \n",nomeLivro);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,7 +81,7 @@ public class Desempenho {
 //            writer.write(String.format("%.3f", media)); // escreve a média no final
 //            writer.newLine();
 
-            System.out.printf("relatório do %s Paralelo gerado \n",nomeLivro);
+            System.out.printf("arquivo CSV do %s Paralelo gerado \n",nomeLivro);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,7 +114,7 @@ public class Desempenho {
 //            writer.write(String.format("%.3f", media)); // escreve a média no final
 //            writer.newLine();
 
-            System.out.printf("relatório do %s Paralelo GPU gerado \n",nomeLivro);
+            System.out.printf("arquivo CSV do %s Paralelo GPU gerado \n",nomeLivro);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,6 +124,5 @@ public class Desempenho {
     private static double calcularMedia(long somaTempos, int iteacoes){
         return (double) somaTempos / iteacoes;
     }
-
 
 }
